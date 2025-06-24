@@ -20,3 +20,6 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    
+    App\Charging\Infrastructure\Session\Query\InMemorySessionRepository:
+        factory: [ 'App\Charging\Infrastructure\Session\Query\InMemorySessionRepository', 'withTestingFixtures' ]

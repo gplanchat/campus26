@@ -4,6 +4,11 @@ api_platform:
     # Mercure integration, remove if unwanted
     mercure:
         include_type: true
+    
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/Charging/Domain/Session'
+    
     # Good defaults for REST APIs
     defaults:
         stateless: true
