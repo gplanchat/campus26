@@ -9,22 +9,23 @@ use ApiPlatform\State\Pagination\Pagination;
 use ApiPlatform\State\Pagination\PaginatorInterface;
 use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
-use App\Charging\Domain\Session\Query\SessionRepositoryInterface;
+use App\Charging\Domain\Session\Query\UseCases\GetSeveralSessionsQuery;
+use App\Platform\QueryBusInterface;
 
 final readonly class QuerySeveralSessionProvider implements ProviderInterface
 {
     public function __construct(
-        private SessionRepositoryInterface $sessionRepository,
+        private QueryBusInterface $queryBus,
         private Pagination $pagination,
     ) {
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PaginatorInterface
     {
-        $sessionPage = $this->sessionRepository->list(
+        $sessionPage = $this->queryBus->query(new GetSeveralSessionsQuery(
             $this->pagination->getPage($context),
             $this->pagination->getLimit($operation, $context),
-        );
+        ));
 
         return new TraversablePaginator($sessionPage, $sessionPage->currentPage, $sessionPage->pageSize, $sessionPage->totalItems);
     }

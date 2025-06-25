@@ -2,7 +2,7 @@
 
 namespace App\Charging\Domain\Session\Query;
 
-use App\Charging\Domain\Session\NotFoundException;
+use App\Charging\Domain\NotFoundException;
 use App\Charging\Domain\Session\SessionId;
 
 interface SessionRepositoryInterface

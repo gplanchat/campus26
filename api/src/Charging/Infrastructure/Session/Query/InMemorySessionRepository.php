@@ -4,63 +4,62 @@ declare(strict_types=1);
 
 namespace App\Charging\Infrastructure\Session\Query;
 
-use App\Charging\Domain\Session\NotFoundException;
+use App\Authentication\Domain\Organization\Query\Organization;
+use App\Authentication\Domain\Organization\Query\UseCases\OrganizationPage;
+use App\Authentication\Domain\Realm\RealmId;
+use App\Authentication\Infrastructure\Organization\DataFixtures\OrganizationFixtures;
+use App\Charging\Domain\NotFoundException;
 use App\Charging\Domain\Session\Query\Session;
 use App\Charging\Domain\Session\Query\SessionPage;
 use App\Charging\Domain\Session\Query\SessionRepositoryInterface;
 use App\Charging\Domain\Session\SessionId;
+use App\Charging\Infrastructure\Session\DataFixtures\SessionDataFixtures;
+use App\Charging\Infrastructure\StorageMock;
 use App\Platform\Collection\Collection;
 
 final class InMemorySessionRepository implements SessionRepositoryInterface
 {
-    /**
-     * @param Session[] $sessions
-     */
     public function __construct(
-        private array $sessions = []
+        private StorageMock $storage,
     ) {
-    }
-
-    public static function withTestingFixtures(): self
-    {
-        return new self([
-            new Session(SessionId::createRandom()),
-            new Session(SessionId::createRandom()),
-            new Session(SessionId::createRandom()),
-            new Session(SessionId::createRandom()),
-            new Session(SessionId::createRandom()),
-            new Session(SessionId::createRandom()),
-            new Session(SessionId::createRandom()),
-            new Session(SessionId::createRandom()),
-            new Session(SessionId::createRandom()),
-        ]);
     }
 
     public function get(SessionId $id): Session
     {
-        $result = Collection::fromArray($this->sessions)
-            ->filter(fn (Session $current) => $current->id->equals($id))
-            ->limit(1)
-            ->toArray();
+        $item = $this->storage->getItem(SessionDataFixtures::getCacheKey($id));
 
-        if (count($result) <= 0) {
+        if (!$item->isHit()) {
             throw new NotFoundException();
         }
 
-        return array_shift($result);
+        $value = $item->get();
+        if (!$value instanceof Session) {
+            throw new NotFoundException();
+        }
+
+        return $value;
     }
 
     public function list(int $currentPage = 1, int $pageSize = 25): SessionPage
     {
-        $collection = Collection::fromArray($this->sessions)
+        $result = $this->walk()
             ->offset(($currentPage - 1) * $pageSize)
-            ->limit($pageSize);
+            ->limit($pageSize)
+            ->toArray()
+        ;
 
         return new SessionPage(
             $currentPage,
             $pageSize,
-            count($this->sessions),
-            ...$collection
+            \count($result),
+            ...array_values($result)
         );
+    }
+
+    public function walk(int $pageSize = 25): Collection
+    {
+        return $this->storage->getValues()
+            ->filter(fn (mixed $value): bool => $value instanceof Session)
+        ;
     }
 }

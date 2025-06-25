@@ -22,4 +22,9 @@ services:
     # please note that last definitions always *replace* previous ones
     
     App\Charging\Infrastructure\Session\Query\InMemorySessionRepository:
-        factory: [ 'App\Charging\Infrastructure\Session\Query\InMemorySessionRepository', 'withTestingFixtures' ]
+    
+    App\Charging\Infrastructure\Born\Query\InMemoryBornRepository:
+        factory: [ 'App\Charging\Infrastructure\Born\Query\InMemoryBornRepository', 'withTestingFixtures' ]
+    
+    App\Charging\Infrastructure\Payment\Query\InMemoryPaymentRepository:
+        factory: [ 'App\Charging\Infrastructure\Payment\Query\InMemoryPaymentRepository', 'withTestingFixtures' ]

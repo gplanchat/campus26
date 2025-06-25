@@ -8,6 +8,8 @@ api_platform:
     mapping:
         paths:
             - '%kernel.project_dir%/src/Charging/Domain/Session'
+            - '%kernel.project_dir%/src/Charging/Domain/Payment'
+            - '%kernel.project_dir%/src/Charging/Domain/Born'
     
     # Good defaults for REST APIs
     defaults:
