@@ -77,7 +77,7 @@ final readonly class Session
             description: 'Starting date of creation of the Session',
             schema: ['type' => 'string', 'format' => 'date', 'required' => true, 'nullable' => false],
         )]
-        #[Context(['datetime_format' => \DateTimeInterface::W3C, 'skip_null_values' => false])]
+        #[Context(['datetime_format' => 'Y-m-d', 'skip_null_values' => false])]
         public \DateTimeInterface $startingDateTime,
     ) {}
 }

@@ -21,10 +21,18 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     
-    App\Charging\Infrastructure\Session\Query\InMemorySessionRepository:
-    
     App\Charging\Infrastructure\Born\Query\InMemoryBornRepository:
         factory: [ 'App\Charging\Infrastructure\Born\Query\InMemoryBornRepository', 'withTestingFixtures' ]
     
     App\Charging\Infrastructure\Payment\Query\InMemoryPaymentRepository:
         factory: [ 'App\Charging\Infrastructure\Payment\Query\InMemoryPaymentRepository', 'withTestingFixtures' ]
+
+    App\Charging\Domain\Session\Query\SessionRepositoryInterface: '@App\Charging\Infrastructure\Session\Query\DatabaseSessionRepository'
+    
+    App\Charging\Domain\Session\Command\SessionRepositoryInterface: '@App\Charging\Infrastructure\Session\Command\DatabaseSessionRepository'
+
+when@test:
+    services:
+        App\Charging\Domain\Session\Query\SessionRepositoryInterface: '@App\Charging\Infrastructure\Session\Query\InMemorySessionRepository'
+        
+        App\Charging\Domain\Session\Command\SessionRepositoryInterface: '@App\Charging\Infrastructure\Session\Command\InMemorySessionRepository'
